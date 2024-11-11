@@ -14,26 +14,21 @@
 <body>
     <header>
         <h1 class="title">Robofriends</h1>
-        <input class="textfield" type="text" placeholder="search" />
+        <input class="textfield search" type="text" placeholder="search" />
     </header>
     <main>
         <ul class="cards">
             <li class="card add-robot">
                 <form method="post" class="add-robot__form">
-                    <input class="textfield" type="text" placeholder="name" />
-                    <input class="textfield" type="email" placeholder="email" />
+                    <input class="textfield" type="text" placeholder="name" name="name" />
+                    <input class="textfield" type="text" placeholder="username" name="username"/>
+                    <input class="textfield" type="email" placeholder="email" name="email"/>
                     <input class="button" type="submit" value="Добавить" />
                 </form>
             </li>
-            <li class="card">
-                <img class="card__avatar" src="https://robohash.org/8?size=300x300" />
-                <div class="card__description">
-                    <h3 class="card__name">Frederic Shopen</h3>
-                    <p class="card__email">fred@gmail.com</p>
-                </div>
-            </li>
         </ul>
     </main>
+    <button class="change-color">Сменить фон</button>
     <script src="script.js"></script>
 </body>
 </html>
