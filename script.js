@@ -61,6 +61,22 @@
 //     }
 // ]
 
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     // render(users)
+//     fetch('https://jsonplaceholder.typicode.com/users')
+//         .then(response => response.json())
+//         .then(data => {
+//             users = data
+//             return users
+//         })
+//         .then(render)
+//         .catch(error => {
+//             console.log(error)
+//             alert("Что-то пошло не так")
+//         })
+// })
+
 let users = []
 
 class Robot {
@@ -77,7 +93,7 @@ class Robot {
         }
         target.insertAdjacentHTML('beforeend', 
             `
-                <li class="card">
+                <li class="card" data-username="${this.username}">
                     <img class="card__avatar" alt="image-${this.id}" src="https://robohash.org/${this.id}?size=300x300" />
                     <div class="card__description">
                         <h3 class="card__name">${this.name}</h3>
@@ -102,22 +118,26 @@ function render(users) {
             return robot
         })
     }
-}
 
-// document.addEventListener("DOMContentLoaded", () => {
-//     // render(users)
-//     fetch('https://jsonplaceholder.typicode.com/users')
-//         .then(response => response.json())
-//         .then(data => {
-//             users = data
-//             return users
-//         })
-//         .then(render)
-//         .catch(error => {
-//             console.log(error)
-//             alert("Что-то пошло не так")
-//         })
-// })
+    // Добавляем обработчики событий mouseenter и mouseleave
+    const cardElements = document.querySelectorAll('.card');
+    cardElements.forEach(card => {
+        const nameElement = card.querySelector('.card__name');
+        card.addEventListener('mouseenter', () => {
+            if (nameElement) {
+                nameElement.textContent = card.dataset.username; // Заменяем имя на никнейм
+            }
+        });
+        card.addEventListener('mouseleave', () => {
+            if (nameElement) {
+                const originalName = users.find(user => user.username === card.dataset.username)?.name; // Возвращаем имя
+                if (originalName) {
+                    nameElement.textContent = originalName;
+                }
+            }
+        });
+    });
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -150,9 +170,37 @@ form.onsubmit = (event) => {
     let username = event.target.username.value
     let email = event.target.email.value
 
+    // Проверка на заполненность полей
+    let hasError = false;
+    if (!name) {
+        showError(event.target.name, "Поле 'Имя' не может быть пустым");
+        hasError = true;
+    } else {
+        clearError(event.target.name);
+    }
+
+    if (!username) {
+        showError(event.target.username, "Поле 'Никнейм' не может быть пустым");
+        hasError = true;
+    } else {
+        clearError(event.target.username);
+    }
+
+    if (!email) {
+        showError(event.target.email, "Поле 'Email' не может быть пустым");
+        hasError = true;
+    } else {
+        clearError(event.target.email);
+    }
+
+    if (hasError) return; // Если есть ошибка, не отправляем форму
+
+
+    // Если массив users пуст, устанавливаем id = 1, иначе увеличиваем id на 1
+    const newId = users.length ? users[users.length - 1].id + 1 : 1;
 
     users.push({
-        id: users[users.length -1].id + 1,
+        id: newId,
         name,
         username,
         email,
@@ -165,13 +213,22 @@ form.onsubmit = (event) => {
     event.target.email.value = ''
 }
 
-
-function changeColor() {
-    document.body.style.background = `linear-gradient(to top right, rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}), rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}))`
+// Функция для отображения ошибки
+function showError(input, message) {
+    let error = input.nextElementSibling;
+    if (!error || !error.classList.contains('error')) {
+        error = document.createElement('div');
+        error.className = 'error';
+        input.parentNode.insertBefore(error, input.nextSibling);
+    }
+    error.textContent = message;
 }
 
-const changeColorButton = document.querySelector('.change-color')
-changeColorButton.onclick = changeColor
-
-
+// Функция для очистки ошибки
+function clearError(input) {
+    let error = input.nextElementSibling;
+    if (error && error.classList.contains('error')) {
+        error.remove(); // Удаляем элемент с ошибкой
+    }
+}
 
